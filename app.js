@@ -7,6 +7,7 @@ var mongoose = require('mongoose')
 var fs = require('fs');
 var util = require('util');
 var readdir = util.promisify(fs.readdir);
+require('dotenv').config()
 
 var usersRouter = require('./routes/users');
 var itemsRouter = require('./routes/items');
@@ -15,7 +16,7 @@ var tradesRouter = require('./routes/trades');
 
 var app = express();
 
-mongoose.connect(process.env.DATABASE_URI || dev_DB_url)
+mongoose.connect(process.env.DB_URL)
   .then(() => console.log("connected to mongoDB"))
   .catch((err) => console.log(err))
 
