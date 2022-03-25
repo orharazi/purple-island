@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const Bid = require('../models/Bid.model')
+const Bid = require('../models/bid.model')
 
 //GET bids by bidding user or by trade id
 router.get('/', async (req,res) => {
