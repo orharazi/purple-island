@@ -15,7 +15,6 @@ var tradesRouter = require('./routes/trades');
 
 var app = express();
 
-const dev_DB_url = "mongodb+srv://purpleAdmin:purpleAdmin123@testscluster.bwses.mongodb.net/purpleDB?retryWrites=true&w=majority"
 mongoose.connect(process.env.DATABASE_URI || dev_DB_url)
   .then(() => console.log("connected to mongoDB"))
   .catch((err) => console.log(err))
