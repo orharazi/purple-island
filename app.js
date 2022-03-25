@@ -7,7 +7,6 @@ var mongoose = require('mongoose')
 var fs = require('fs');
 var util = require('util');
 var readdir = util.promisify(fs.readdir);
-require('dotenv').config()
 
 var usersRouter = require('./routes/users');
 var itemsRouter = require('./routes/items');
@@ -16,7 +15,8 @@ var tradesRouter = require('./routes/trades');
 
 var app = express();
 
-mongoose.connect(process.env.DB_URL)
+const dev_DB_url = "mongodb+srv://purpleAdmin:purpleAdmin123@testscluster.bwses.mongodb.net/purpleDB?retryWrites=true&w=majority"
+mongoose.connect(process.env.DB_URL || dev_DB_url)
   .then(() => console.log("connected to mongoDB"))
   .catch((err) => console.log(err))
 
