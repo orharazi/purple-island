@@ -3,10 +3,22 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var mongoose = require('mongoose')
+var fs = require('fs');
+var util = require('util');
+var readdir = util.promisify(fs.readdir);
+require('dotenv').config()
 
 var usersRouter = require('./routes/users');
+var itemsRouter = require('./routes/items');
+var bidsRouter = require('./routes/bids');
+var tradesRouter = require('./routes/trades');
 
 var app = express();
+
+mongoose.connect(process.env.DB_URL)
+  .then(() => console.log("connected to mongoDB"))
+  .catch((err) => console.log(err))
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -23,7 +35,22 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', function(req, res, next) {
   res.sendFile(path.join(__dirname+'/frontend/build/index.html'));
 });
-app.use('/users', usersRouter);
+
+//configure routes
+app.use('/api/users', usersRouter);
+app.use('/api/items', itemsRouter);
+app.use('/api/bids', bidsRouter);
+app.use('/api/trades', tradesRouter);
+
+
+
+// const routesdir = `${__dirname}/routes`;
+// readdir(routesdir).then(files => {
+//     files.forEach(filename => {
+//       console.log(`/api/${filename.replace(/\.[^.]*$/, '')}`)
+//       app.use(`/api/${filename.replace(/\.[^.]*$/, '')}`, require(`${routesdir}/${filename}`));
+//     });
+// });
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
