@@ -1,12 +1,12 @@
 var express = require('express');
 var router = express.Router();
 const Trade = require('../models/trade.model')
+const paginatedResults = require('../middleware/pagination')
 
 //GET all trades
-router.get('/', async (req,res) => {
+router.get('/', paginatedResults(Trade, 'offersUser'), async (req,res) => {
   try {
-    const trades = await Trade.find()
-    res.status(200).json(trades)
+    res.status(200).json(res.paginatedResults)
   } catch (e) {
     res.status(400).json({message: e})
   }

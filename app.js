@@ -7,7 +7,10 @@ var mongoose = require('mongoose')
 var fs = require('fs');
 var util = require('util');
 var readdir = util.promisify(fs.readdir);
+var cors = require('cors');
+
 require('dotenv').config()
+
 
 var usersRouter = require('./routes/users');
 var itemsRouter = require('./routes/items');
@@ -15,6 +18,9 @@ var bidsRouter = require('./routes/bids');
 var tradesRouter = require('./routes/trades');
 
 var app = express();
+app.use(cors({
+  origin: 'http://localhost:3001'
+}));
 
 mongoose.connect(process.env.DB_URL)
   .then(() => console.log("connected to mongoDB"))
@@ -32,16 +38,15 @@ app.use(express.static(path.resolve(__dirname, "./frontend/build")));
 app.use(express.static(path.join(__dirname, 'frontend/build')));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/', function(req, res, next) {
-  res.sendFile(path.join(__dirname+'/frontend/build/index.html'));
-});
-
 //configure routes
 app.use('/api/users', usersRouter);
 app.use('/api/items', itemsRouter);
 app.use('/api/bids', bidsRouter);
 app.use('/api/trades', tradesRouter);
 
+app.get('*', (req, res) => {                       
+  res.sendFile(path.resolve(__dirname+'/frontend/build/index.html'));                               
+});
 
 
 // const routesdir = `${__dirname}/routes`;
@@ -67,5 +72,7 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error', { title: 'Express' });
 });
+
+
 
 module.exports = app;

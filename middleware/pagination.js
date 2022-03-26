@@ -1,14 +1,18 @@
-const paginatedResults = (model) => {
+function paginatedResults (model, valueToSearchOn) {
   return async (req, res, next) => {
     const page = parseInt(req.query.page)
     const limit = parseInt(req.query.limit)
-
+    const querySearch = req.query.q
+    const relField = valueToSearchOn
+    let queryRegex = {}
+    queryRegex[relField] = { "$regex": querySearch, "$options": "i" }
+    let relDocs = querySearch !== undefined || querySearch !== '' ? valueToSearchOn === "offersUser" ? model.populate(valueToSearchOn).find(queryRegex) : model.find(queryRegex) : model
     const startIndex = (page - 1) * limit
     const endIndex = page * limit
 
     const results = {}
 
-    if (endIndex < await model.countDocuments().exec()) {
+    if (endIndex < await relDocs.countDocuments().exec()) {
       results.next = {
         page: page + 1,
         limit: limit
@@ -22,7 +26,7 @@ const paginatedResults = (model) => {
       }
     }
     try {
-      results.results = await model.find().limit(limit).skip(startIndex).exec()
+      results.results = await model.find((querySearch !== undefined || querySearch !== '') && queryRegex).limit(limit).skip(startIndex).exec()
       res.paginatedResults = results
       next()
     } catch (e) {
@@ -31,4 +35,4 @@ const paginatedResults = (model) => {
   }
 }
 
-module.exports = paginatedResults(model)
+module.exports = paginatedResults

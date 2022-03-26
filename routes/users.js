@@ -3,12 +3,12 @@ var router = express.Router();
 var fs = require('fs')
 const User = require('../models/user.model')
 const uploadMiddleware = require('../middleware/uplodeFile');
+const paginatedResults = require('../middleware/pagination')
 
 //GET all users
-router.get('/', async (req,res) => {
+router.get('/',paginatedResults(User, "username"), async (req,res) => {
   try {
-    const users = await User.find()
-    res.status(200).json({users: users})
+    res.status(200).json(res.paginatedResults)
   } catch (e) {
     res.status(400).json({message: e})
   }
