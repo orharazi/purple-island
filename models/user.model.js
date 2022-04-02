@@ -16,7 +16,12 @@ const userSchema = new Schema({
       ref: 'Item'
     },
     Amount: Number
-  }]
+  }],
+  isNew: {
+    type: Boolean,
+    require: true,
+    default: true
+  }
 }, {timestamps: true})
 
 module.exports = mongoose.model('User', userSchema);

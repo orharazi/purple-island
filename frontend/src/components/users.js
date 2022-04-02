@@ -14,11 +14,21 @@ const Users = () => {
     await Promise.resolve(dispatch(setUser(obj)))
     navigate('/')
   }
+  const fields = [
+    {
+      fieldName: "username",
+      require: true
+    }, {
+      fieldName: "avatar",
+      require: false
+    }
+  ]
 
   return (
     <SearchOnData 
       model={'users'}
       onClick={onClickFunc}
+      fields={fields}
     />
   )
 }

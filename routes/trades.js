@@ -4,7 +4,7 @@ const Trade = require('../models/trade.model')
 const paginatedResults = require('../middleware/pagination')
 
 //GET all trades
-router.get('/', paginatedResults(Trade, 'offersUser'), async (req,res) => {
+router.get('/', paginatedResults(Trade), async (req,res) => {
   try {
     res.status(200).json(res.paginatedResults)
   } catch (e) {
@@ -26,7 +26,7 @@ router.get('/:id', async (req, res, next) => {
 router.get('/', async (req,res) => {
   const {userId} = req.query
   try {
-    const tradesByUser = await Trade.find({offersUser: userId})
+    const tradesByUser = await Trade.find({offeredsUser: userId})
     res.status(200).json(tradesByUser)
   } catch (e) {
     res.status(400).json({message: e})
@@ -34,9 +34,11 @@ router.get('/', async (req,res) => {
 })
 
 //POST new trade
-router.post('/', async (req, res) => {
+router.post('/', (req, res) => {
+  // add multiparti middleware
   let trade = new Trade({
-    offersUser: req.body.offersUser,
+    offeredUser: req.body.offeredUser,
+    offeredUsername: req.body.offeredUsername,
     offeredItems: req.body.offeredItems,
     active: true
   })

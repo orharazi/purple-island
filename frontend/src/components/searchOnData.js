@@ -1,13 +1,15 @@
 import React, { useState, useRef, useCallback } from 'react'
-import { Container ,Card, Row, Col } from 'react-bootstrap'
+import { Container ,Card, Row, Col} from 'react-bootstrap'
 import useObjectSearch from './useObjectSearch'
+
+import AddModal from './addModal'
 
 const SearchOnData = (props) => {
   const [query, setQuery] = useState('')
   const [pageNumber, setPageNumber] = useState(1)
+  const [showAddModal, setShowAddModal] = useState(false)
   const limitNumber = 10
   const currentModel = props.model
-  const onClickFunc = (e) => props.onClickFunc(e)
 
   const {
     Objects,
@@ -35,33 +37,53 @@ const SearchOnData = (props) => {
 
   return (
     <Container className="searchContainer justify-content-md-center">
-      <Row className="justify-content-md-center">
-        <Col lg={2}>
-          <input 
-          className="searchBox" 
-          type="text" 
-          value={query} 
-          onChange={handleSearch}
-          placeholder="Search here..."
-          >
-          </input>
+      <h1>{currentModel} panel</h1>
+      <Row className="justify-content-md-center firstRow">
+        <Col lg={1} className="d-flex align-items-center">
+          <img
+            alt=""
+            src="/static/add.png"
+            width="30"
+            height="30"
+            className="d-flex align-items-center"
+            style={{ cursor: "pointer"}}
+            onClick={() => setShowAddModal(true)}
+          />
+          </Col>
+        <Col lg={{span: 2, offset: 4}}>
+          {currentModel !== "trades" &&
+            <input 
+              className="searchBox d-flex align-items-center" 
+              type="text" 
+              value={query} 
+              onChange={handleSearch}
+              placeholder="Search here..."
+            />
+          }
         </Col>
+        <Col lg={5}></Col>
       </Row>
       <Container className="cardContainer">
         <Row xs={1} md={4}>
         {Objects.map((object, index) => {
           return (
-            <Col>
+            <Col key={object._id}>
               <Card
+                key={index}
                 md={{span: 3, offset: 1}}
                 ref={Objects.length === index + 1 ? lastObjectElementRef : null}
-                key={object._id}
                 className="cardStyled"
                 onClick={() => props.onClick(object)}
               >
-                <Card.Title key={object.username}>
-                  {object.username}
-                </Card.Title>
+                {currentModel === "trades" ?
+                  <Card.Title key={object.offeredUsername}>
+                    {object.offeredUsername}
+                  </Card.Title>
+                :  
+                  <Card.Title key={object.username}>
+                    {object.username}
+                  </Card.Title>
+                }
               </Card>
             </Col>
           )
@@ -70,7 +92,15 @@ const SearchOnData = (props) => {
         <div>{error && 'Error'}</div>
         </Row>
       </Container>
+      <AddModal
+        show={showAddModal}
+        onHide={() => setShowAddModal(false)}
+        fields={props.fields}
+        modelName={currentModel}
+        handleSearch={() => handleSearch()}
+      />
     </Container>
+    
 
   )
 }

@@ -9,16 +9,16 @@ import {
   Link
 } from 'react-router-dom'
 
+
 const NavbarComponent = () => {
   const user = useSelector(state => state.user)
-  console.log(user)
   return (
     <Navbar className="navbarStyled">
       <Container>
-        <Navbar.Brand href="#home">
+        <Navbar.Brand href="/profile">
           <img
             alt=""
-            src="/static/logo.png"
+            src={'http://localhost:3000/' + user.avatar}
             width="30"
             height="30"
             className="d-inline-block align-top"

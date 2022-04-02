@@ -14,12 +14,17 @@ import {
   useDispatch,
   useSelector
 } from 'react-redux'
+
+import { setItems } from './reducers/items.reducer';
 import { setUser } from './reducers/users.reducer'
+import { getAllfromModel, getOnefromModel } from './functions/apiCalls'
 
 import NavbarComponent from './components/navbar'
 import Profile from './components/profile'
 import TradeCenter from './components/tradeCenter'
 import Users from './components/users'
+
+
 
 
 function App() {
@@ -29,9 +34,14 @@ function App() {
   useEffect(() => {
     const setUserData = async () => {
       const prevUser = localStorage.getItem('prevUser')
+      const items = await getAllfromModel('items')
       if (prevUser) {
-        await Promise.resolve(dispatch(setUser(JSON.parse(prevUser))))
+        const prevUserData = JSON.parse(prevUser)
+        const userData = await getOnefromModel("users", prevUserData._id)
+        console.log(userData)
+        await Promise.resolve(dispatch(setUser(userData)))
       }
+      await Promise.resolve(dispatch(setItems(items)))
       setLoading(false)
     }
     setUserData()

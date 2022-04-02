@@ -54,12 +54,19 @@
 .searchBox {
   border-radius: 10px;
   border-color: transparent !important;
-  margin-bottom: 20px;
-  margin-top: 10px;
 
 }
 
 .cardStyled {
   margin-bottom: 10px;
   cursor: pointer;
+}
+
+.profileContainer {
+  margin-top: 10px;
+}
+
+.firstRow {
+  margin-top: 10px !important;
+  margin-bottom: 20px;
 }

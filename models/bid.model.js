@@ -7,12 +7,12 @@ const bidSchema = new Schema({
     ref: 'Trade',
     required: true
   },
-  biddingUser: {
+  offeredsUser: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
   },
-  items: [{
+  offeredItems: [{
     itemId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Item',

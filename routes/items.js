@@ -6,7 +6,7 @@ const Item = require('../models/item.model')
 router.get('/', async (req,res) => {
   try {
     const items = await Item.find()
-    res.status(200).json({items: items})
+    res.status(200).json(items)
   } catch (e) {
     res.status(400).json({message: e})
   }

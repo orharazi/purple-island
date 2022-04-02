@@ -24,9 +24,12 @@ router.get('/:id', async (req, res, next) => {
 router.post('/',uploadMiddleware.single('avatar'), async (req, res) => {
   let user = new User({
     username: req.body.username,
+    isNew: true
   })
   if (req.file) {
     user.avatar = req.file.path
+  } else {
+    user.avatar = 'public/images/avatars/defaultUserPic.jpg'
   }
   user.save()
   .then(response => {
@@ -43,16 +46,25 @@ router.post('/',uploadMiddleware.single('avatar'), async (req, res) => {
 })
 
 //PUT existing user
-router.put('/:id',uploadMiddleware.single('avatar'), async (req, res) => {
+router.put('/:id', uploadMiddleware.single('avatar'), async (req, res) => {
   try {
     let user = await User.findOne({_id: req.params.id})
+    if (req.body.username) {
+      user.username = req.body.username
+    }
     if (req.body.OwnedItems) {
-      user.OwnedItems = req.body.OwnedItems
+      let items = JSON.parse(req.body.OwnedItems)
+      console.log("items: " + items)
+      user.OwnedItems = items
+      if (user.isNew) {
+        user.isNew = false
+      }
     } 
     if (req.file) {
-      if (user.avatar) {
+      if (user.avatar !== 'public/images/avatars/defaultUserPic.jpg') {
         fs.unlinkSync(user.avatar)
       }
+      console.log("file Found!", req.file)
       user.avatar = req.file.path
     }
     user.save()
@@ -63,11 +75,11 @@ router.put('/:id',uploadMiddleware.single('avatar'), async (req, res) => {
     })
     .catch(err => {
       res.status(400).json({
-        message: "error"
+        message: err
       })
     })
   } catch (e) {
-    res.status(400).json({message: "error in try"})
+    res.status(400).json({message: e})
   }
 })
 

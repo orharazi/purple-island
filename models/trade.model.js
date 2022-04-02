@@ -2,9 +2,13 @@ const mongoose = require("mongoose")
 const { Schema } = mongoose;
 
 const tradeSchema = new Schema({
-  offersUser: {
+  offeredUser: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
+    required: true
+  },
+  offeredUsername: {
+    type: String,
     required: true
   },
   offeredItems: [{
