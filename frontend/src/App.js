@@ -38,7 +38,6 @@ function App() {
       if (prevUser) {
         const prevUserData = JSON.parse(prevUser)
         const userData = await getOnefromModel("users", prevUserData._id)
-        console.log(userData)
         await Promise.resolve(dispatch(setUser(userData)))
       }
       await Promise.resolve(dispatch(setItems(items)))

@@ -1,11 +1,17 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 
-export default function useObjectSearch(query, pageNumber,limitNumber, modelName) {
+export default function useObjectSearch(query, pageNumber, limitNumber, modelName) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
   const [Objects, setObjects] = useState([])
   const [hasMore, setHasMore] = useState(false)
+
+  useEffect(() => {
+    if (pageNumber === 1) {
+      setObjects([])
+    }
+  }, [pageNumber])
 
   useEffect(() => {
     setObjects([])
@@ -17,7 +23,7 @@ export default function useObjectSearch(query, pageNumber,limitNumber, modelName
     let cancel
     axios({
       method: 'GET',
-      url: `/api/${modelName}`,
+      url: `http://localhost:3000/api/${modelName}`,
       params: { page: pageNumber, limit: limitNumber, q: query },
       cancelToken: new axios.CancelToken(c => cancel = c)
     }).then(res => {

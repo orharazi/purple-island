@@ -30,13 +30,14 @@ router.get('/:id', async (req, res, next) => {
 
 //POST new bid
 router.post('/', async (req, res) => {
-  let Bid = new Bid({
+  let bid = new Bid({
     tradeId: req.body.tradeId,
     biddingUser: req.body.biddingUser,
-    items: req.body.items
+    biddingUsername: req.body.biddingUsername,
+    offeredItems: req.body.offeredItems
   })
 
-  Bid.save()
+  bid.save()
   .then(response => {
     res.status(200).json({
       message: "Bid Added Successfully!"

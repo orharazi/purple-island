@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { Modal, Button, Form } from 'react-bootstrap'
 import ItemsTable from './itemsTable'
-import {postNewToModel} from '../functions/apiCalls'
+import { postNewToModel } from '../functions/apiCalls'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
@@ -11,6 +11,7 @@ const AddModal = (props) => {
   const [itemsAdded, setItemsAdded] = useState([])
   const fields = props.fields
   const modelName = props.modelName
+  const callReload = () => props.callReload()
   let data = {}
   const itemsTable = useMemo(() => {
     return (
@@ -22,7 +23,6 @@ const AddModal = (props) => {
   }, [])
 
   useEffect(() => {
-    console.log("state changes!: ", itemsAdded)
     data["ownedItems"] = itemsAdded
   },[itemsAdded, isFill])
 
@@ -36,13 +36,14 @@ const AddModal = (props) => {
     let relFields = fields.filter(field => field.require)
     if (Object.keys(data).length === relFields.length) {setIsFill(false)}
   }
-  const onSave = () => {
+  const onSave = async () => {
     let formData
     if (modelName === "trades" && itemsAdded.length > 0) {
+      const FinalItems = itemsAdded.filter(obj => obj.Amount !== 0) //remove 0's
       formData = {
         'offeredUser': user.id,
         'offeredUsername': user.username,
-        'offeredItems': itemsAdded
+        'offeredItems': FinalItems
       }
     } else {
       formData = new FormData()
@@ -50,7 +51,8 @@ const AddModal = (props) => {
         formData.append(key, data[key])
       }
     }
-    postNewToModel(modelName, formData)
+    const res = await postNewToModel(modelName, formData)
+    callReload()
     onHide()
   }
   

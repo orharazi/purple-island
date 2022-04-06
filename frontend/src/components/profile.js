@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import { InputGroup, Container, FormControl, Row, Button, Col, Table} from 'react-bootstrap'
-import { setNotNew } from '../reducers/users.reducer'
+import { setNotNew, setUserItems } from '../reducers/users.reducer'
 import {
   useSelector,
   useDispatch
@@ -92,8 +92,10 @@ const Profile = () => {
     }
     if (newItems.length > 0 && isNew) {      
       dispatch(setNotNew)
+      dispatch(setUserItems(newItems))
       setIsNew(false)
       data['OwnedItems'] = newItems
+      
     }    
     let formData = new FormData()
     for (var key in data) {
@@ -139,7 +141,6 @@ const Profile = () => {
           <Button variant="warning" onClick={generateItems}>Generate Items</Button>
           :
           (
-            console.log(newItems),
             newItems.length > 0 ? 
               <Table bordered>
               <thead>

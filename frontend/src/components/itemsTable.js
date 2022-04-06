@@ -22,18 +22,25 @@ const ItemsTable = (props) => {
       } else {
         itemsData.push({
           itemID: ItemId,
-          Amount: value
+          Amount: value,
+          max: max
         })
       }
     // if selected item dosent have the value requested
     
 
     //at the end set array
-    let isOk = itemsData.every(obj => obj.Amount <= max)
-    console.log(isOk)
-    isOk ? setIsFill(false) : setIsFill(true)
+    let isOk = itemsData.every(obj => obj.Amount <= obj.max && obj.Amount >= 0) 
+    let allZero = itemsData.every(obj => obj.Amount === 0)
+    if (props.tradeVal) {
+      let calcAll = itemsData.reduce((acc, curr) => {
+        return acc + curr.Amount * items.find(item => item._id === curr.itemID).price
+      }, 0)
+      isOk && !allZero && calcAll > props.tradeVal ? setIsFill(false) : setIsFill(true)
+    } else {
+      isOk && !allZero ? setIsFill(false) : setIsFill(true)
+    }
     setItemsAdded(itemsData)
-    console.log("current data: ", itemsData)
   }
 
   return (
@@ -56,7 +63,7 @@ const ItemsTable = (props) => {
                   className="searchBox d-flex align-items-center" 
                   type="number" 
                   placeholder="Enter value..."
-                  onChange={(e) => validateAmount(item._id, e.target.value, item.Amount)}
+                  onChange={(e) => validateAmount(item.itemID, e.target.value, item.Amount)}
                 />
                   available: {item.Amount}
                   </td>

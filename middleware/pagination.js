@@ -5,7 +5,7 @@ function paginatedResults (model, valueToSearchOn) {
     const page = parseInt(req.query.page)
     const limit = parseInt(req.query.limit)
     const querySearch = req.query.q
-    console.log(querySearch)
+
     const relField = valueToSearchOn
     let queryRegex = {}
     queryRegex[relField] = { "$regex": querySearch, "$options": "i" }

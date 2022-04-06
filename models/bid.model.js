@@ -7,18 +7,22 @@ const bidSchema = new Schema({
     ref: 'Trade',
     required: true
   },
-  offeredsUser: {
+  biddingUser: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
   },
+  biddingUsername: {
+    type: String,
+    required: true
+  },
   offeredItems: [{
-    itemId: {
+    itemID: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Item',
       required: true
     },
-    amount: Number
+    Amount: Number
   }]
  
 }, {timestamps: true})

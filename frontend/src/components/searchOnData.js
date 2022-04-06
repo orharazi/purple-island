@@ -1,5 +1,6 @@
-import React, { useState, useRef, useCallback } from 'react'
-import { Container ,Card, Row, Col} from 'react-bootstrap'
+import React, { useState, useRef, useCallback, useEffect } from 'react'
+import { useSelector } from 'react-redux'
+import { Container ,Card, Row, Col, ListGroup} from 'react-bootstrap'
 import useObjectSearch from './useObjectSearch'
 
 import AddModal from './addModal'
@@ -8,6 +9,7 @@ const SearchOnData = (props) => {
   const [query, setQuery] = useState('')
   const [pageNumber, setPageNumber] = useState(1)
   const [showAddModal, setShowAddModal] = useState(false)
+  const items = useSelector(state => state.items)
   const limitNumber = 10
   const currentModel = props.model
 
@@ -17,6 +19,10 @@ const SearchOnData = (props) => {
     loading,
     error
   } = useObjectSearch(query, pageNumber, limitNumber, currentModel)
+
+  const callReload = () => {
+    setPageNumber(1)
+  }
 
   const observer = useRef()
   const lastObjectElementRef = useCallback(node => {
@@ -51,7 +57,7 @@ const SearchOnData = (props) => {
           />
           </Col>
         <Col lg={{span: 2, offset: 4}}>
-          {currentModel !== "trades" &&
+
             <input 
               className="searchBox d-flex align-items-center" 
               type="text" 
@@ -59,7 +65,7 @@ const SearchOnData = (props) => {
               onChange={handleSearch}
               placeholder="Search here..."
             />
-          }
+          
         </Col>
         <Col lg={5}></Col>
       </Row>
@@ -76,9 +82,19 @@ const SearchOnData = (props) => {
                 onClick={() => props.onClick(object)}
               >
                 {currentModel === "trades" ?
+                <>
                   <Card.Title key={object.offeredUsername}>
                     {object.offeredUsername}
                   </Card.Title>
+                  <ListGroup variant="flush">
+                    {object.offeredItems.map((item, index) => {
+                      let itemObject = items.find((i) => i._id === item.itemID)
+                      return (
+                        <ListGroup.Item key={index}>{itemObject.name}: {item.Amount}</ListGroup.Item>
+                      )
+                    })}
+                  </ListGroup>
+                </>
                 :  
                   <Card.Title key={object.username}>
                     {object.username}
@@ -98,6 +114,7 @@ const SearchOnData = (props) => {
         fields={props.fields}
         modelName={currentModel}
         handleSearch={() => handleSearch()}
+        callReload={callReload}
       />
     </Container>
     

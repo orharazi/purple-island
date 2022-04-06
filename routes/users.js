@@ -54,7 +54,6 @@ router.put('/:id', uploadMiddleware.single('avatar'), async (req, res) => {
     }
     if (req.body.OwnedItems) {
       let items = JSON.parse(req.body.OwnedItems)
-      console.log("items: " + items)
       user.OwnedItems = items
       if (user.isNew) {
         user.isNew = false
@@ -64,7 +63,6 @@ router.put('/:id', uploadMiddleware.single('avatar'), async (req, res) => {
       if (user.avatar !== 'public/images/avatars/defaultUserPic.jpg') {
         fs.unlinkSync(user.avatar)
       }
-      console.log("file Found!", req.file)
       user.avatar = req.file.path
     }
     user.save()

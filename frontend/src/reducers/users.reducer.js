@@ -20,10 +20,13 @@ export const userSlice = createSlice({
     setNotNew: (state) => {
       state.isNew = false
     },
+    setUserItems: (state, action) => {
+      state.OwnedItems = action.payload
+    },
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { setUser, setNotNew } = userSlice.actions
+export const { setUser, setNotNew, setUserItems } = userSlice.actions
 
 export default userSlice.reducer
