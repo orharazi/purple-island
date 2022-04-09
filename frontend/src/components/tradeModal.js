@@ -2,12 +2,11 @@ import React, {useEffect, useState} from "react"
 import { Modal, ListGroup, Accordion, Button } from "react-bootstrap"
 import { useSelector } from "react-redux"
 import BidModel from "./bidModal"
-import { getFilteredfromModel } from "../functions/apiCalls"
+import { getFilteredfromModel, postNewToModel } from "../functions/apiCalls"
 
 const TradeModal = (props) => {
   const [showAddBid, setShowAddBid] = useState(false)
   const [bids, setBids] = useState([])
-  const [activeKey, setActiveKey] = useState(null)
   const user = useSelector(state => state.user)
   const items = useSelector(state => state.items)
   const trade = props.trade
@@ -16,16 +15,35 @@ const TradeModal = (props) => {
     return acc + curr.Amount * items.find(item => item._id === curr.itemID).price
   }, 0)
 
+  const setBidsFunc = async () => {
+    const bidsByTrade = await getFilteredfromModel('bids','tradeId', trade._id)
+    setBids(bidsByTrade)
+  }
+
   useEffect(() => {
-    const setBidsFunc = async () => {
-      const bidsByTrade = await getFilteredfromModel('bids', trade._id)
-      setBids(bidsByTrade)
-    }
-    setBidsFunc()
-  }, [])
+    props.show && setBidsFunc()
+  }, [props.show])
   
   const onHide = () => {
+    setBids([])
     props.onHide()
+  }
+
+  const onCLickConfirm = async (bid) => {
+    const tradeData = {
+      openTradeUser: {
+        id: user.id,
+        itemsToTrade: trade.offeredItems
+      },
+      createBidUser: {
+        id: bid.biddingUser,
+        itemsToTrade: bid.offeredItems
+      },
+      tradeId: trade._id,
+      bidId: bid._id
+    }
+    console.log('confirm: ', {tradeData})
+    const res = await postNewToModel('confirmBid', {tradeData})
   }
 
 
@@ -52,8 +70,7 @@ const TradeModal = (props) => {
           })}
         </ListGroup>
         <h3>current Bids: </h3>
-        <Accordion
-        >
+        <Accordion>
           {bids.length > 0 ? 
             bids.map((bid, index) => {
               let totalValueOfBid = bid.offeredItems.reduce((acc, curr) => {
@@ -63,9 +80,10 @@ const TradeModal = (props) => {
                 <Accordion.Item
                   eventKey={bid._id}
                   key={index}
-                  // onClick={() => setActiveKey(bid._id)}
                 >
-                  <Accordion.Header>Bid By {bid.biddingUsername}, price of {totalValueOfBid}</Accordion.Header>
+                  <Accordion.Header>
+                    <h4>Bid By {bid.biddingUsername}, price of {totalValueOfBid}</h4>
+                  </Accordion.Header>
                   <Accordion.Body>
                     <ListGroup variant="flush">
                       {bid.offeredItems.map((item, index) => {
@@ -75,7 +93,10 @@ const TradeModal = (props) => {
                         )
                       })}
                     </ListGroup>
-                  </Accordion.Body>
+                    {isTradeAdmin && 
+                      <Button style={{ marginTop: 10 }} variant="success" onClick={() => onCLickConfirm(bid)}>Confirm Bid!</Button>
+                    }
+                    </Accordion.Body>
                 </Accordion.Item>
               )
             })
@@ -90,6 +111,7 @@ const TradeModal = (props) => {
       userId={user.id}
       tradeVal={tradeVal}
       username={user.username}
+      setBidsFunc={setBidsFunc}
     />
     </>
   )

@@ -36,7 +36,7 @@ const ItemsTable = (props) => {
       let calcAll = itemsData.reduce((acc, curr) => {
         return acc + curr.Amount * items.find(item => item._id === curr.itemID).price
       }, 0)
-      isOk && !allZero && calcAll > props.tradeVal ? setIsFill(false) : setIsFill(true)
+      isOk && !allZero && calcAll >= props.tradeVal ? setIsFill(false) : setIsFill(true)
     } else {
       isOk && !allZero ? setIsFill(false) : setIsFill(true)
     }

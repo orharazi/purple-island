@@ -4,7 +4,7 @@ const Trade = require('../models/trade.model')
 const paginatedResults = require('../middleware/pagination')
 
 //GET all trades
-router.get('/', paginatedResults(Trade), async (req,res) => {
+router.get('/', paginatedResults(Trade, 'offeredUsername'), async (req,res) => {
   try {
     res.status(200).json(res.paginatedResults)
   } catch (e) {

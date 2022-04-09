@@ -11,7 +11,7 @@ router.get('/', async (req,res) => {
       res.status(200).json(userBid)
     }
     if (tradeId) {
-      const userBid = await Bid.find({biddingUser: userId})
+      const userBid = await Bid.find({tradeId: tradeId})
       res.status(200).json(userBid)
     } else {
       const userBid = await Bid.find()

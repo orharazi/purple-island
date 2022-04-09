@@ -18,7 +18,7 @@ const NavbarComponent = () => {
         <Navbar.Brand href="/profile">
           <img
             alt=""
-            src={'http://localhost:3000/' + user.avatar}
+            src={user.avatar}
             width="30"
             height="30"
             className="d-inline-block align-top"

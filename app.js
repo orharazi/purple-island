@@ -17,6 +17,7 @@ var usersRouter = require('./routes/users');
 var itemsRouter = require('./routes/items');
 var bidsRouter = require('./routes/bids');
 var tradesRouter = require('./routes/trades');
+var confirmBid = require('./routes/confirmBid');
 
 var app = express();
 app.use(cors({
@@ -46,6 +47,7 @@ app.use('/api/users', usersRouter);
 app.use('/api/items', itemsRouter);
 app.use('/api/bids', bidsRouter);
 app.use('/api/trades', tradesRouter);
+app.use('/api/confirmBid', confirmBid);
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
 app.get('*', (req, res) => {                       

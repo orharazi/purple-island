@@ -1,4 +1,3 @@
-const { query } = require("express")
 
 function paginatedResults (model, valueToSearchOn) {
   return async (req, res, next) => {
@@ -8,8 +7,9 @@ function paginatedResults (model, valueToSearchOn) {
 
     const relField = valueToSearchOn
     let queryRegex = {}
-    queryRegex[relField] = { "$regex": querySearch, "$options": "i" }
-    let relDocs = (querySearch !== undefined && querySearch !== '') ? valueToSearchOn === "offersUser" ? model.populate(valueToSearchOn).find(queryRegex) : model.find(queryRegex) : model
+    valueToSearchOn === 'offeredUsername' ? queryRegex.active = true : null
+    querySearch !== null ? queryRegex[relField] = { "$regex": querySearch, "$options": "i" } : null
+    let relDocs = model.find(queryRegex)
     const startIndex = (page - 1) * limit
     const endIndex = page * limit
 
@@ -29,7 +29,7 @@ function paginatedResults (model, valueToSearchOn) {
       }
     }
     try {
-      results.results = await model.find((querySearch !== undefined && querySearch !== '') ? queryRegex : null).limit(limit).skip(startIndex).exec()
+      results.results = await model.find(queryRegex).limit(limit).skip(startIndex).exec()
       res.paginatedResults = results
       next()
     } catch (e) {
