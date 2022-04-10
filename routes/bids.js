@@ -4,12 +4,8 @@ const Bid = require('../models/bid.model')
 
 //GET bids by bidding user or by trade id
 router.get('/', async (req,res) => {
-  const {tradeId, userId} = req.query
+  const {tradeId} = req.query
   try {
-    if (userId) {
-      const userBid = await Bid.find({biddingUser: userId})
-      res.status(200).json(userBid)
-    }
     if (tradeId) {
       const userBid = await Bid.find({tradeId: tradeId})
       res.status(200).json(userBid)

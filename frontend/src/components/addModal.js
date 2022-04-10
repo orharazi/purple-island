@@ -1,14 +1,17 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { Modal, Button, Form } from 'react-bootstrap'
+import { Modal, Button, Form, Col } from 'react-bootstrap'
 import ItemsTable from './itemsTable'
 import { postNewToModel } from '../functions/apiCalls'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
+import { setAlert } from '../reducers/alert.reducer'
 
 const AddModal = (props) => {
+  const dispatch = useDispatch()
   const [isFill, setIsFill] = useState(true)
   const user = useSelector(state => state.user)
   const [itemsAdded, setItemsAdded] = useState([])
+  const [error, setError] = useState('')
   const fields = props.fields
   const modelName = props.modelName
   const callReload = () => props.callReload()
@@ -18,6 +21,7 @@ const AddModal = (props) => {
       <ItemsTable 
         setItemsAdded = {(items) => setItemsAdded(items)}
         setIsFill = {(res) => setIsFill(res)}
+        setError={(err) => setError(err)}
       />
     )
   }, [])
@@ -52,6 +56,11 @@ const AddModal = (props) => {
       }
     }
     const res = await postNewToModel(modelName, formData)
+    let alertData = {
+      status: res.status,
+      message: res.data.message
+    }
+    dispatch(setAlert(alertData))
     callReload()
     onHide()
   }
@@ -60,11 +69,12 @@ const AddModal = (props) => {
     <Modal
       show={props.show}
       onHide={onHide}
+      centered
     >
-      <Modal.Header closeButton>
-        <Modal.Title className="justify-content-md-center">
-          Add {modelName}
-        </Modal.Title>
+      <Modal.Header>
+        <Col className="justify-content-md-center">
+        <h1>Add {modelName}</h1>
+        </Col>
       </Modal.Header>
       <Modal.Body>
         {modelName === "trades" ? 
@@ -72,6 +82,7 @@ const AddModal = (props) => {
         : 
           <h4>Please fill all fields:</h4>
          }
+         
         <Form>
         {modelName === "trades" ? 
           user.OwnedItems.length === 0 && user.isNew ? 
@@ -95,6 +106,7 @@ const AddModal = (props) => {
          }
 
         </Form>
+        {error !== '' && <p className="text-danger">{error}</p>}
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={onSave} disabled={isFill}>Save</Button>

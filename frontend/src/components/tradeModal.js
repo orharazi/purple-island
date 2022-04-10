@@ -1,14 +1,19 @@
-import React, {useEffect, useState} from "react"
-import { Modal, ListGroup, Accordion, Button } from "react-bootstrap"
-import { useSelector } from "react-redux"
+import React, { useEffect, useState } from "react"
+import { Modal, ListGroup, Accordion, Button, Row, Col } from "react-bootstrap"
+import { useSelector, useDispatch } from "react-redux"
+import { useNavigate  } from "react-router-dom";
 import BidModel from "./bidModal"
-import { getFilteredfromModel, postNewToModel } from "../functions/apiCalls"
+import { getFilteredfromModel, postNewToModel, getOnefromModel } from "../functions/apiCalls"
+import { setUser } from "../reducers/users.reducer";
+import { setAlert } from '../reducers/alert.reducer'
 
 const TradeModal = (props) => {
   const [showAddBid, setShowAddBid] = useState(false)
   const [bids, setBids] = useState([])
   const user = useSelector(state => state.user)
   const items = useSelector(state => state.items)
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
   const trade = props.trade
   const isTradeAdmin = user.id === trade.offeredUser
   const tradeVal = trade.offeredItems.reduce((acc, curr) => {
@@ -42,25 +47,41 @@ const TradeModal = (props) => {
       tradeId: trade._id,
       bidId: bid._id
     }
-    console.log('confirm: ', {tradeData})
     const res = await postNewToModel('confirmBid', {tradeData})
+    if (res.status === 200) {
+      const userData = await getOnefromModel("users", user.id)
+      await Promise.resolve(dispatch(setUser(userData)))
+    }
+    let alertData = {
+      status: res.status,
+      message: res.data.message
+    }
+    dispatch(setAlert(alertData))
+    onHide()
+    navigate('/profile')
   }
 
 
   return (
     <>
     <Modal
-    show={props.show}
-    onHide={onHide}
-    size="lg"
-    centered
+      show={props.show}
+      onHide={onHide}
+      size="lg"
+      centered
     >
       <Modal.Header>
-        {!isTradeAdmin && <Button onClick={() => setShowAddBid(true)}> Add bid!</Button>}
-        <h1>Trade By {trade.offeredUsername}</h1>
+        <Col lg={2} className="">
+          {!isTradeAdmin && <Button onClick={() => setShowAddBid(true)}> Add bid!</Button>}
+        </Col>
+        <Col lg={8}>
+          <h1 className="">Trade By {trade.offeredUsername}</h1>
+          <h4> value of: {tradeVal} points</h4>
+        </Col>
+        <Col lg={2}></Col>
       </Modal.Header>
       <Modal.Body>
-        <h3>trade Items:</h3>
+        <h3>Trade Items:</h3>
         <ListGroup variant="flush">
           {trade.offeredItems.map((item, index) => {
             let itemObject = items.find((i) => i._id === item.itemID)
@@ -69,7 +90,7 @@ const TradeModal = (props) => {
             )
           })}
         </ListGroup>
-        <h3>current Bids: </h3>
+        <h3>Current Bids: </h3>
         <Accordion>
           {bids.length > 0 ? 
             bids.map((bid, index) => {

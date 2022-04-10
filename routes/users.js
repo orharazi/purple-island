@@ -15,7 +15,7 @@ router.get('/',paginatedResults(User, "username"), async (req,res) => {
 })
 
 //GET one user
-router.get('/:id', async (req, res, next) => {
+router.get('/:id', async (req, res) => {
   const user = await User.findOne({_id: req.params.id})
   res.status(200).json(user)
 });

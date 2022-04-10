@@ -1,9 +1,7 @@
-import React, { useState } from 'react'
+import React from 'react'
 import SearchOnData from './searchOnData'
-import { useNavigate  } from 'react-router'
-import {
-  useDispatch,
-} from 'react-redux'
+import { useNavigate } from 'react-router'
+import { useDispatch } from 'react-redux'
 import { setUser } from '../reducers/users.reducer'
 
 const Users = () => {
@@ -25,11 +23,14 @@ const Users = () => {
   ]
 
   return (
-    <SearchOnData 
-      model={'users'}
-      onClick={onClickFunc}
-      fields={fields}
-    />
+    <>
+      <h1>Users panel</h1>
+      <SearchOnData 
+        model={'users'}
+        onClick={onClickFunc}
+        fields={fields}
+      />
+    </>
   )
 }
 

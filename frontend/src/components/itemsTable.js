@@ -1,12 +1,13 @@
-import React, {useState} from 'react'
+import React from 'react'
 import { useSelector } from 'react-redux'
-import {Table} from 'react-bootstrap'
+import { Table } from 'react-bootstrap'
 
 const ItemsTable = (props) => {
   const user = useSelector(state => state.user)
   const items = useSelector(state => state.items)
   const setItemsAdded = (items) => props.setItemsAdded(items)
   const setIsFill = (res) => props.setIsFill(res)
+  const setError = (err) => props.setError(err)
   let itemsData = []
 
 
@@ -26,18 +27,29 @@ const ItemsTable = (props) => {
           max: max
         })
       }
-    // if selected item dosent have the value requested
-    
-
-    //at the end set array
-    let isOk = itemsData.every(obj => obj.Amount <= obj.max && obj.Amount >= 0) 
+    // if selected item is not the value requested
+    let isOk = itemsData.every(obj => obj.Amount <= obj.max && obj.Amount >= 0)
+    if (!isOk) {
+      setError('Amount must be between 0 and max items you own')
+    } else {
+      setError('')
+    }
+    // if all items are equel to 0
     let allZero = itemsData.every(obj => obj.Amount === 0)
+
     if (props.tradeVal) {
       let calcAll = itemsData.reduce((acc, curr) => {
         return acc + curr.Amount * items.find(item => item._id === curr.itemID).price
       }, 0)
+      if (calcAll < props.tradeVal || !isOk) {
+        !isOk && setError('Amount must be between 0 and max items you own')
+        calcAll < props.tradeVal && setError('Bid offer value needs to be at least ' + props.tradeVal)
+      } else {
+        setError('')
+      }
       isOk && !allZero && calcAll >= props.tradeVal ? setIsFill(false) : setIsFill(true)
     } else {
+      !isOk ? setError('Amount must be between 0 and max items you own') : setError('')
       isOk && !allZero ? setIsFill(false) : setIsFill(true)
     }
     setItemsAdded(itemsData)

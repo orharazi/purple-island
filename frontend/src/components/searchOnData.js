@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { Container ,Card, Row, Col, ListGroup} from 'react-bootstrap'
+import { Container ,Card, Row, Col, ListGroup, Image} from 'react-bootstrap'
 import useObjectSearch from './useObjectSearch'
 
 import AddModal from './addModal'
@@ -43,9 +43,8 @@ const SearchOnData = (props) => {
 
   return (
     <Container className="searchContainer justify-content-md-center">
-      <h1>{currentModel} panel</h1>
       <Row className="justify-content-md-center firstRow">
-        <Col lg={1} className="d-flex align-items-center">
+        <Col xs={1} lg={1} className="d-flex align-items-center">
           <img
             alt=""
             src="/static/add.png"
@@ -56,22 +55,22 @@ const SearchOnData = (props) => {
             onClick={() => setShowAddModal(true)}
           />
           </Col>
-        <Col lg={{span: 2, offset: 4}}>
-
-            <input 
-              className="searchBox d-flex align-items-center" 
-              type="text" 
-              value={query} 
-              onChange={handleSearch}
-              placeholder="Search here..."
-            />
-          
+        <Col xs={{span: 2, offset: 2}} lg={{span: 2, offset: 4}}>
+          <input 
+            className="searchBox d-flex align-items-center" 
+            type="text" 
+            value={query} 
+            onChange={handleSearch}
+            placeholder="Search here..."
+          />
         </Col>
-        <Col lg={5}></Col>
+        <Col xs={5} lg={5}></Col>
       </Row>
       <Container className="cardContainer">
         <Row xs={1} md={4}>
         {Objects.map((object, index) => {
+          let objectTitle = currentModel === "trades" ? object.offeredUsername : object.username
+          let itemsToShow = currentModel === "trades" ? object.offeredItems : object.OwnedItems
           return (
             <Col key={object._id}>
               <Card
@@ -81,30 +80,33 @@ const SearchOnData = (props) => {
                 className="cardStyled"
                 onClick={() => props.onClick(object)}
               >
-                {currentModel === "trades" ?
-                <>
-                  <Card.Title key={object.offeredUsername}>
-                    {object.offeredUsername}
-                  </Card.Title>
-                  <ListGroup variant="flush">
-                    {object.offeredItems.map((item, index) => {
-                      let itemObject = items.find((i) => i._id === item.itemID)
-                      return (
-                        <ListGroup.Item key={index}>{itemObject.name}: {item.Amount}</ListGroup.Item>
-                      )
-                    })}
-                  </ListGroup>
-                </>
-                :  
-                  <Card.Title key={object.username}>
-                    {object.username}
-                  </Card.Title>
-                }
+                <Card.Title key={objectTitle}>
+                  {objectTitle}
+                </Card.Title>
+                <ListGroup variant="flush">
+                  {currentModel === "users" && object.isNew ? 
+                  <p>Please generate items!</p>
+                  :
+                  itemsToShow.slice(0,2).map((item, index) => {
+                    let itemObject = items.find((i) => i._id === item.itemID)
+                    return (
+                      <ListGroup.Item key={index}>{itemObject.name}: {item.Amount} {index === 1 && itemsToShow.length > 2 ? '& more...' : null}</ListGroup.Item>
+                    )
+                  })
+                } 
+                </ListGroup>
               </Card>
             </Col>
           )
         })}
-        <div>{loading && 'Loading...'}</div>
+        <div>
+          {loading && 
+          <>
+          <Image src={'/static/loader.gif'} />
+          <h1>Loading {currentModel}..</h1>
+          </>
+          }
+        </div>
         <div>{error && 'Error'}</div>
         </Row>
       </Container>

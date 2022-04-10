@@ -18,10 +18,6 @@ const tradeSchema = new Schema({
     },
     Amount: Number
   }],
-  acceptedBid: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Bid'
-  },
   active: {
     type: Boolean,
     required: true

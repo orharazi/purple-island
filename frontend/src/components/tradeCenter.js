@@ -1,9 +1,6 @@
 import React, { useState } from 'react'
 import SearchOnData from './searchOnData'
 import TradeModel from './tradeModal'
-// import {
-//   useDispatch,
-// } from 'react-redux'
 
 const TradeCenter = () => {
   const [showModal, setShowModal] = useState(false)
@@ -21,6 +18,7 @@ const TradeCenter = () => {
 
   return (
     <>
+    <h1>Trades panel</h1>
     <SearchOnData 
       model={'trades'}
       onClick={onClickFunc}

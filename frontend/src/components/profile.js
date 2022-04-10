@@ -1,12 +1,10 @@
 import React, {useState, useEffect} from 'react'
-import { InputGroup, Container, FormControl, Row, Button, Col, Table} from 'react-bootstrap'
-import { setNotNew, setUserItems } from '../reducers/users.reducer'
-import {
-  useSelector,
-  useDispatch
-} from 'react-redux'
+import { InputGroup, Container, FormControl, Row, Button, Col, Table, Accordion } from 'react-bootstrap'
+import { setNotNew, setUser, setUserItems } from '../reducers/users.reducer'
+import { setAlert } from '../reducers/alert.reducer'
+import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate  } from 'react-router'
-import { putObjectToModel } from '../functions/apiCalls'
+import { putObjectToModel, getDeals, getOnefromModel } from '../functions/apiCalls'
 
 const Profile = () => {
   const user = useSelector(state => state.user)
@@ -15,8 +13,17 @@ const Profile = () => {
   const [avatar, setAvatar] = useState(null)
   const [newItems, setNewItems] = useState(user.OwnedItems ? user.OwnedItems : [])
   const [isNew, setIsNew] = useState(user.isNew)
+  const [userDeals, setUserDeals] = useState([])
   const dispatch = useDispatch()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    const getUserDeals = async () => {
+      const deals = await getDeals(user.id)
+      setUserDeals(deals)
+    }
+    getUserDeals()
+  }, [])
   
   const uploadAvatar = (e) => {
     setAvatar(e.target.files[0])
@@ -79,8 +86,6 @@ const Profile = () => {
     setNewItems(itemsToDb)
   }
 
-
-
   const onSave = async () => {
 
     const data = {}
@@ -106,7 +111,16 @@ const Profile = () => {
       }
     }
 
-    await putObjectToModel('users',formData, user.id )
+    const res = await putObjectToModel('users',formData, user.id )
+    if (res.status === 200) {
+      const userData = await getOnefromModel("users", user.id)
+      await Promise.resolve(dispatch(setUser(userData)))
+    }
+    let alertData = {
+      status: res.status,
+      message: res.data.message
+    }
+    dispatch(setAlert(alertData))
     navigate('/')
   }
   
@@ -166,11 +180,59 @@ const Profile = () => {
           )
         }
       </div>
-      <Row>
-        <Col md={1}>
+      <h3>User Deals: </h3>
+      <div className="dealsContainer">
+        {userDeals.length > 0 ?
+          <Accordion>
+            {userDeals.map((deal) => {
+              return (
+                <Accordion.Item
+                  eventKey={deal._id}
+                  key={deal._id}
+                >
+                  <Accordion.Header>
+                    <p>Trade from {deal.tradedUsername} to {deal.bidedUsername}</p>
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    <Table bordered>
+                      <thead>
+                        <tr>
+                          <th>{deal.tradedUsername}</th>
+                          <th>{deal.bidedUsername}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>{deal.tradedItems.map((item) => {
+                            let itemObject = items.find((i) => i._id === item.itemID)
+                            return (
+                              <p key={itemObject.name}>{item.Amount}-{itemObject.name}</p>
+                            )
+                          })}</td>
+                          <td>{deal.bidedItems.map((item) => {
+                            let itemObject = items.find((i) => i._id === item.itemID)
+                            return (
+                              <p key={itemObject.name}>{item.Amount}-{itemObject.name}</p>
+                            )
+                          })}</td>
+                        </tr>
+                      </tbody>
+                    </Table>
+                  </Accordion.Body>
+
+                </Accordion.Item>
+              )
+            })}
+          </Accordion>
+          :
+          <h1>Start Making Deals!</h1>
+        }
+      </div>
+      <Row style={{ marginTop: 10 }}>
+        <Col xs={2} md={1}>
           <Button variant="success" onClick={onSave} disabled={newItems.length < 0}>Save</Button>
         </Col>
-        <Col md={1}>
+        <Col xs={2} md={1}>
           <Button variant="danger" onClick={() => navigate('/')}>Back</Button>
         </Col>
       </Row>

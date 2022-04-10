@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import logo from './logo.svg';
 import './App.css';
-import { Navbar, Container } from 'react-bootstrap'
+import { Image } from 'react-bootstrap'
 import {
   BrowserRouter as Router,
   Routes ,
@@ -23,6 +23,7 @@ import NavbarComponent from './components/navbar'
 import Profile from './components/profile'
 import TradeCenter from './components/tradeCenter'
 import Users from './components/users'
+import AlertComponent from './components/alert';
 
 
 
@@ -77,13 +78,16 @@ function App() {
             </RequireAuth>
           } />
           <Route path='/Users' element={<Users/>} />
-
         </Routes >
+        <AlertComponent />
       </Router> 
     )
   } else {
     return (
-      <h1>loading...</h1>
+      <div className="loaderPosition">
+        <Image src={'/static/loader.gif'} height={200} width={200} />
+        <h1>Loading app...</h1>
+      </div>
     )
   }
 }

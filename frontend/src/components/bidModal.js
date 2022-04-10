@@ -1,16 +1,24 @@
-import React, { useState, useMemo } from "react"
-import { Modal, ListGroup, Accordion, Button } from "react-bootstrap"
+import React, { useState, useMemo, useEffect } from "react"
+import { Modal, Col, Button } from "react-bootstrap"
 import ItemsTable from "./itemsTable"
 import { postNewToModel } from '../functions/apiCalls'
-import { useSelector } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
 import { Link } from 'react-router-dom'
+import { setAlert } from '../reducers/alert.reducer'
+
 
 
 const BidModal = (props) => {
+  const dispatch = useDispatch()
   const [itemsAdded, setItemsAdded] = useState([])
   const [isFill, setIsFill] = useState(true)
+  const [error, setError] = useState('')
   const tradeVal = props.tradeVal
   const user = useSelector(state => state.user)
+
+  useEffect(() => {
+    console.log(error)
+  }, [error])
 
   const itemsTable = useMemo(() => {
     return (
@@ -18,6 +26,7 @@ const BidModal = (props) => {
         setItemsAdded = {(items) => setItemsAdded(items)}
         setIsFill = {(res) => setIsFill(res)}
         tradeVal={tradeVal}
+        setError={(err) => setError(err)}
       />
     )
   }, [])
@@ -30,7 +39,6 @@ const BidModal = (props) => {
   const onSave = async () => {
    
     const FinalItems = itemsAdded.filter(obj => obj.Amount !== 0) //remove 0's
-    console.log(FinalItems)
     let data = {
       tradeId: props.tradeId,
       biddingUser: props.userId,
@@ -40,7 +48,11 @@ const BidModal = (props) => {
     setIsFill(true)
     props.onHide()
     const res = await postNewToModel('bids', data)
-    console.log(res)
+    let alertData = {
+      status: res.status,
+      message: res.data.message
+    }
+    dispatch(setAlert(alertData))
     await props.setBidsFunc()
   }
 
@@ -48,9 +60,12 @@ const BidModal = (props) => {
     <Modal
       show={props.show}
       onHide={onHide}
+      centered
     >
       <Modal.Header>
-        <h1>Make a Bid!</h1>
+        <Col className="justify-content-md-center">
+          <h1>Make a Bid!</h1>
+        </Col>
       </Modal.Header>
       <Modal.Body>
         {user.OwnedItems.length === 0 && user.isNew ? 
@@ -58,6 +73,7 @@ const BidModal = (props) => {
         :
           itemsTable
         }
+        {error !== '' && <p className="text-danger">{error}</p>}
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={onSave} disabled={isFill}>Create new Bid</Button>

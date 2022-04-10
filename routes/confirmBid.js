@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+const ConfirmTrade = require('../models/confirmTrade.model')
 const Trade = require('../models/trade.model')
 const User = require('../models/user.model')
 const Bid = require('../models/bid.model')
@@ -56,6 +57,15 @@ router.post('/', async (req, res) => {
       changeUserItems(tradeData.createBidUser.itemsToTrade, tradeData.openTradeUser.itemsToTrade, createBidUser.OwnedItems)
       changeUserItems(tradeData.openTradeUser.itemsToTrade, tradeData.createBidUser.itemsToTrade, openTradeUser.OwnedItems)
       currentTrade.active = false
+      let confirmTrade = new ConfirmTrade({
+        bidedUser: createBidUser._id,
+        bidedUsername: createBidUser.username,
+        bidedItems: tradeData.createBidUser.itemsToTrade,
+        tradedUser: openTradeUser._id,
+        tradedUsername: openTradeUser.username,
+        tradedItems: tradeData.openTradeUser.itemsToTrade
+      }) 
+      confirmTrade.save()
       currentTrade.save()
       openTradeUser.save()
       createBidUser.save()
@@ -65,17 +75,32 @@ router.post('/', async (req, res) => {
         // trade status = false
         currentTrade.active = false
         currentTrade.save()
-        res.status(400).json({messege: 'openTradeUser dont have all items!'})
+        res.status(400).json({messege: 'open Trade User dont have all items!'})
       }
       if (!createBidUserHaveItems) {
         // delete bid
         currentBid.remove().exec()
-        res.status(400).json({messege: 'createBidUser dont have all items!'})
+        res.status(400).json({messege: 'create Bid User dont have all items!'})
       }
     }
   } else {
     // request error!
     res.status(400).json({messege: 'could not find Users, Trade or bid!'})
+  }
+})
+
+//GET deals By UserID
+router.get('/:userId', async (req,res) => {
+  const userId = req.params.userId
+  try {
+    if (userId) {
+      const userAcceptedTrades = await ConfirmTrade.find({accepted: true, tradedUser: userId})
+      const userAcceptedBids = await ConfirmTrade.find({accepted: true, bidedUser: userId})
+      const resData = [...userAcceptedTrades, ...userAcceptedBids]
+      res.status(200).json(resData)
+    }
+  } catch (e) {
+    res.status(400).json({message: e})
   }
 })
 

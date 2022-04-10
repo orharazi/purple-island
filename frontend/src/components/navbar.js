@@ -1,38 +1,41 @@
-import React, {useState} from 'react'
-import logo from '../logo.svg';
+import React from 'react'
 import '../App.css';
-import { Navbar, Container, Nav } from 'react-bootstrap'
+import { Navbar, Container, Nav, Image, NavDropdown } from 'react-bootstrap'
 import {
   useSelector
 } from 'react-redux'
-import {
-  Link
-} from 'react-router-dom'
-
 
 const NavbarComponent = () => {
   const user = useSelector(state => state.user)
   return (
     <Navbar className="navbarStyled">
       <Container>
-        <Navbar.Brand href="/profile">
-          <img
-            alt=""
-            src={user.avatar}
-            width="30"
-            height="30"
-            className="d-inline-block align-top"
-          />{' '}
-        Hello {user.username ? user.username : "Guest! Please choose charecter." }
+        <Navbar.Brand href="/">
+          Purple Island
         </Navbar.Brand>
-        <Nav>
-          <Nav.Item>
-            <Nav.Link href="/users">users</Nav.Link>
-          </Nav.Item>
-          <Nav.Item>
-            <Nav.Link href="/profile">profile</Nav.Link>
-          </Nav.Item>
+        <Nav className="me-auto">
+          <NavDropdown title="navigate" id="basic-nav-dropdown">
+            <NavDropdown.Item href="/profile">Profile</NavDropdown.Item>
+            <NavDropdown.Item href="/users">users</NavDropdown.Item>
+            <NavDropdown.Item href="/">Trades</NavDropdown.Item>
+        </NavDropdown>
         </Nav>
+        <Navbar.Toggle />
+        <Navbar.Collapse className="justify-content-end">
+          <Navbar.Brand href="/profile">
+            {user.avatar !== "" ? 
+              <Image
+                roundedCircle
+                alt=""
+                src={user.avatar}
+                width="30"
+                height="30"
+                className="d-inline-block align-top"
+              />
+            : null} {' '}
+            Hello {user.username ? user.username : "Guest! Please choose charecter." }
+          </Navbar.Brand>
+        </Navbar.Collapse>
       </Container>
     </Navbar>
   );

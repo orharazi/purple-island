@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from "react"
 import axios from 'axios'
 
 export default function useObjectSearch(query, pageNumber, limitNumber, modelName) {
@@ -30,7 +30,7 @@ export default function useObjectSearch(query, pageNumber, limitNumber, modelNam
       setObjects(prevObjects => {
         return [...new Set([...prevObjects, ...res.data.results])]
       })
-      setHasMore(res.data.results.length > 0)
+      setHasMore(res.data.next)
       setLoading(false)
     }).catch(e => {
       if (axios.isCancel(e)) return

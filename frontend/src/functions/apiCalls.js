@@ -16,19 +16,30 @@ export const getOnefromModel = async (model, id) => {
 }
 
 export const postNewToModel = async (model, data) => {
-  const res = await axios.post(`/api/${model}`, data, {
+  return axios.post(`/api/${model}`, data, {
     headers: {
       'Content-Type': model === "users" ? 'multipart/form-data' : 'application/json'  
     }
+  }).then(res => {
+    return res
+  }).catch(err => {
+    return err
   })
-  return res.data
 }
 
 export const putObjectToModel = async (model,data, id) => {
-  const res = await axios.put(`/api/${model}/${id}`, data,{
+  return axios.put(`/api/${model}/${id}`, data,{
     headers: {
       'Content-Type': model === "users" ? 'multipart/form-data' : 'application/json'
     }
+  }).then(res => {
+    return res
+  }).catch(err => {
+    return err
   })
-  return res.data
+}
+
+export const getDeals = async (id) => {
+  const data = await axios.get(`/api/confirmBid/${id}`)
+  return data.data
 }
