@@ -59,10 +59,8 @@ router.post('/', async (req, res) => {
       currentTrade.active = false
       let confirmTrade = new ConfirmTrade({
         bidedUser: createBidUser._id,
-        bidedUsername: createBidUser.username,
         bidedItems: tradeData.createBidUser.itemsToTrade,
         tradedUser: openTradeUser._id,
-        tradedUsername: openTradeUser.username,
         tradedItems: tradeData.openTradeUser.itemsToTrade
       }) 
       confirmTrade.save()
@@ -94,8 +92,8 @@ router.get('/:userId', async (req,res) => {
   const userId = req.params.userId
   try {
     if (userId) {
-      const userAcceptedTrades = await ConfirmTrade.find({accepted: true, tradedUser: userId})
-      const userAcceptedBids = await ConfirmTrade.find({accepted: true, bidedUser: userId})
+      const userAcceptedTrades = await ConfirmTrade.find({accepted: true, tradedUser: userId}).populate('bidedUser')
+      const userAcceptedBids = await ConfirmTrade.find({accepted: true, bidedUser: userId}).populate('tradedUser')
       const resData = [...userAcceptedTrades, ...userAcceptedBids]
       res.status(200).json(resData)
     }

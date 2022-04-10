@@ -60,9 +60,6 @@ router.put('/:id', uploadMiddleware.single('avatar'), async (req, res) => {
       }
     } 
     if (req.file) {
-      if (user.avatar !== 'public/images/avatars/defaultUserPic.jpg') {
-        fs.unlinkSync(user.avatar)
-      }
       user.avatar = req.file.path
     }
     user.save()

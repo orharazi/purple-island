@@ -185,31 +185,34 @@ const Profile = () => {
         {userDeals.length > 0 ?
           <Accordion>
             {userDeals.map((deal) => {
+              let otherUser = deal.tradedUser.username !== undefined ? deal.tradedUser.username : deal.bidedUser.username
+              let myItems = deal.tradedUser.username !== undefined ? deal.bidedItems : deal.tradedItems
+              let otherUserItems = deal.tradedUser.username !== undefined ? deal.tradedItems : deal.bidedItems
               return (
                 <Accordion.Item
                   eventKey={deal._id}
                   key={deal._id}
                 >
                   <Accordion.Header>
-                    <p>Trade from {deal.tradedUsername} to {deal.bidedUsername}</p>
+                    <p>Trade Between {user.username} to {otherUser}</p>
                   </Accordion.Header>
                   <Accordion.Body>
                     <Table bordered>
                       <thead>
                         <tr>
-                          <th>{deal.tradedUsername}</th>
-                          <th>{deal.bidedUsername}</th>
+                          <th>{user.username}</th>
+                          <th>{otherUser}</th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr>
-                          <td>{deal.tradedItems.map((item) => {
+                          <td>{myItems.map((item) => {
                             let itemObject = items.find((i) => i._id === item.itemID)
                             return (
                               <p key={itemObject.name}>{item.Amount}-{itemObject.name}</p>
                             )
                           })}</td>
-                          <td>{deal.bidedItems.map((item) => {
+                          <td>{otherUserItems.map((item) => {
                             let itemObject = items.find((i) => i._id === item.itemID)
                             return (
                               <p key={itemObject.name}>{item.Amount}-{itemObject.name}</p>

@@ -10,7 +10,7 @@ const SearchOnData = (props) => {
   const [pageNumber, setPageNumber] = useState(1)
   const [showAddModal, setShowAddModal] = useState(false)
   const items = useSelector(state => state.items)
-  const limitNumber = 10
+  const limitNumber = 32
   const currentModel = props.model
 
   const {

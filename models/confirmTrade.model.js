@@ -2,10 +2,6 @@ const mongoose = require("mongoose")
 const { Schema } = mongoose;
 
 const confirmTradeSchema = new Schema({
-  bidedUsername: {
-    type: String,
-    required: true
-  },
   bidedUser: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -19,10 +15,6 @@ const confirmTradeSchema = new Schema({
     },
     Amount: Number
   }],
-  tradedUsername: {
-    type: String,
-    required: true
-  },
   tradedUser: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

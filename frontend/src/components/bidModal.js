@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react"
+import React, { useState, useMemo } from "react"
 import { Modal, Col, Button } from "react-bootstrap"
 import ItemsTable from "./itemsTable"
 import { postNewToModel } from '../functions/apiCalls'
@@ -15,10 +15,6 @@ const BidModal = (props) => {
   const [error, setError] = useState('')
   const tradeVal = props.tradeVal
   const user = useSelector(state => state.user)
-
-  useEffect(() => {
-    console.log(error)
-  }, [error])
 
   const itemsTable = useMemo(() => {
     return (
