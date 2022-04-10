@@ -23,7 +23,7 @@ export default function useObjectSearch(query, pageNumber, limitNumber, modelNam
     let cancel
     axios({
       method: 'GET',
-      url: `http://localhost:3000/api/${modelName}`,
+      url: `/api/${modelName}`,
       params: { page: pageNumber, limit: limitNumber, q: query },
       cancelToken: new axios.CancelToken(c => cancel = c)
     }).then(res => {

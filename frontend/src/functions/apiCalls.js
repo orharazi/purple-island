@@ -1,22 +1,22 @@
 import axios from 'axios'
 
 export const getAllfromModel = async (model) => {
-  const data = await axios.get(`http://localhost:3000/api/${model}`)
+  const data = await axios.get(`/api/${model}`)
   return data.data
 }
 
 export const getFilteredfromModel = async (model,filteredObjName, filteredObjID) => {
-  const data = await axios.get(`http://localhost:3000/api/${model}?${filteredObjName}=${filteredObjID}`)
+  const data = await axios.get(`/api/${model}?${filteredObjName}=${filteredObjID}`)
   return data.data
 }
 
 export const getOnefromModel = async (model, id) => {
-  const data = await axios.get(`http://localhost:3000/api/${model}/${id}`)
+  const data = await axios.get(`/api/${model}/${id}`)
   return data.data
 }
 
 export const postNewToModel = async (model, data) => {
-  return axios.post(`http://localhost:3000/api/${model}`, data, {
+  return axios.post(`/api/${model}`, data, {
     headers: {
       'Content-Type': model === "users" ? 'multipart/form-data' : 'application/json'  
     }
@@ -28,7 +28,7 @@ export const postNewToModel = async (model, data) => {
 }
 
 export const putObjectToModel = async (model,data, id) => {
-  return axios.put(`http://localhost:3000/api/${model}/${id}`, data,{
+  return axios.put(`/api/${model}/${id}`, data,{
     headers: {
       'Content-Type': model === "users" ? 'multipart/form-data' : 'application/json'
     }
@@ -40,6 +40,6 @@ export const putObjectToModel = async (model,data, id) => {
 }
 
 export const getDeals = async (id) => {
-  const data = await axios.get(`http://localhost:3000/api/confirmBid/${id}`)
+  const data = await axios.get(`/api/confirmBid/${id}`)
   return data.data
 }
